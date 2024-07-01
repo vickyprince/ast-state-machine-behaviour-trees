@@ -12,6 +12,9 @@ class DummyClass:
 
     def size(self) -> int:
         return len(self.items)
+    
+    def set_items(self, items: List[str]):
+        self.items = items
 
     def get_items(self) -> List[str]:
         return self.items
