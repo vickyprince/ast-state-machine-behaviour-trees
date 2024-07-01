@@ -36,9 +36,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=.github/workflows/
     - name: Test with unittest
       run: |
-        python -m unittest discover -s ast_testing/ast_testing/test
+        python -m unittest discover -s ast_testing/test
     - name: Run tests with coverage
       run: |
         pip install coverage
-        coverage run -m unittest discover -s ast_testing/ast_testing/test
+        coverage run -m unittest discover -s ast_testing/test
         coverage report
