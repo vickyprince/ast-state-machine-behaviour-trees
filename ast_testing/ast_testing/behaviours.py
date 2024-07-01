@@ -17,10 +17,6 @@ class Rotate(pt.behaviour.Behaviour):
         self.max_ang_vel = ang_vel # units: rad/sec
         super(Rotate, self).__init__(name)
 
-        # TODO: initialise any necessary class variables
-        # YOUR CODE HERE
-#         raise NotImplementedError()
-
     def setup(self, **kwargs):
         """Setting up things which generally might require time to prevent delay in the tree initialisation
         """
@@ -31,12 +27,7 @@ class Rotate(pt.behaviour.Behaviour):
         except KeyError as e:
             error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.qualified_name)
             raise KeyError(error_message) from e 
-
-        # TODO: setup any necessary publishers or subscribers
-
-        # YOUR CODE HERE
-#         raise NotImplementedError()
-        # Create publisher to publish rotation commands
+        
         self.cmd_vel_pub = self.node.create_publisher(
             msg_type=Twist,
             topic=self.topic_name,
@@ -55,12 +46,6 @@ class Rotate(pt.behaviour.Behaviour):
         self.logger.info("[ROTATE] update: updating rotate behaviour")
         self.logger.debug("%s.update()" % self.__class__.__name__)
 
-        # TODO: implement the primary function of the behaviour and decide which status to return 
-        # based on the structure of your behaviour tree
-
-        # Hint: to return a status, for example, SUCCESS, pt.common.Status.SUCCESS can be used
-
-        # YOUR CODE HERE
         msg = Twist()
         msg.angular.z = 0.5
         """if (self.direction == +1):
@@ -71,8 +56,6 @@ class Rotate(pt.behaviour.Behaviour):
         self.cmd_vel_pub.publish(msg)
         
         return pt.common.Status.RUNNING
-#         raise NotImplementedError()
-
 
     def terminate(self, new_status):
         """Trigerred once the execution of the behaviour finishes, 
@@ -80,10 +63,6 @@ class Rotate(pt.behaviour.Behaviour):
         """
         self.logger.info("[ROTATE] terminate: publishing zero angular velocity")
 
-        # TODO: implement the termination of the behaviour, i.e. what should happen when the behaviour 
-        # finishes its execution
-
-        # YOUR CODE HERE
         twist_msg = Twist()
         twist_msg.linear.x = 0.
         twist_msg.linear.y = 0.
@@ -92,8 +71,6 @@ class Rotate(pt.behaviour.Behaviour):
         self.cmd_vel_pub.publish(twist_msg)
         self.sent_goal = False
         
-#         raise NotImplementedError()
-
         return super().terminate(new_status)
 
 class StopMotion(pt.behaviour.Behaviour):
@@ -178,7 +155,6 @@ class StopMotion(pt.behaviour.Behaviour):
         self.sent_goal = False
         return super().terminate(new_status)
     
-#     raise NotImplementedError()
 
 
 class BatteryStatus2bb(ptr.subscribers.ToBlackboard):
@@ -224,7 +200,6 @@ class BatteryStatus2bb(ptr.subscribers.ToBlackboard):
             self.blackboard.battery_low_warning = False
                 
         return pt.common.Status.SUCCESS
-#         raise NotImplementedError()
 
 
 class LaserScan2bb(ptr.subscribers.ToBlackboard):
@@ -287,4 +262,3 @@ class LaserScan2bb(ptr.subscribers.ToBlackboard):
             print("Initiating Laser Scan")
             return pt.common.Status.RUNNING 
         
-#         raise NotImplementedError()
