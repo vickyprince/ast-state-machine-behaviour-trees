@@ -14,6 +14,7 @@ sys.modules['std_msgs.msg'] = MagicMock()
 sys.modules['sensor_msgs'] = MagicMock()
 sys.modules['sensor_msgs.msg'] = MagicMock()
 
+
 import py_trees as pt
 from ast_testing.behaviours import Rotate, StopMotion, BatteryStatus2bb, LaserScan2bb
 
