@@ -47,6 +47,7 @@ def create_root() -> pt.behaviour.Behaviour:
      
     rotate_platform = Rotate(name="rotate_platform", topic_name="/cmd_vel")
     stop_platform = StopMotion(name="stop_platform", topic_name1="/cmd_vel")
+    rotate_90_platform = Rotate90(name="rotate_90_platform", topic_name="/cmd_vel", ang_vel=1.0, angle=90.0)
 
     def check_battery_low_on_blackboard(blackboard):
         return blackboard.battery_low_warning 
@@ -70,8 +71,7 @@ def create_root() -> pt.behaviour.Behaviour:
         name="Colliding?",
         condition=check_collison_warn_on_blackboard,
         blackboard_keys={"collison_warning"},
-        child = stop_platform
-
+        child = rotate_90_platform
     )
 
     

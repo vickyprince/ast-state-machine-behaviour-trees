@@ -16,7 +16,7 @@ sys.modules['sensor_msgs.msg'] = MagicMock()
 
 
 import py_trees as pt
-from ast_testing.behaviours import Rotate, StopMotion, BatteryStatus2bb, LaserScan2bb
+from ast_testing.behaviours import Rotate, StopMotion, BatteryStatus2bb, LaserScan2bb, Rotate90
 
 class TestRotate(unittest.TestCase):
     def setUp(self):
@@ -151,6 +151,44 @@ class TestLaserScan2bb(unittest.TestCase):
             mock_scan.update.assert_called()
             self.assertEqual(laser_scan.name, 'Scan2BB')
             self.assertEqual(laser_scan.safe_min_range, 0.25)
+
+class TestRotate90(unittest.TestCase):
+    def setUp(self):
+        # Set up mock objects for each test
+        self.mock_node = MagicMock()
+        self.mock_publisher = MagicMock()
+        self.mock_node.create_publisher.return_value = self.mock_publisher
+
+    def test_rotate90_initialization(self):
+        # Test the initialization of the Rotate90 class
+        rotate90 = Rotate90(name="test_rotate90", topic_name="/test_topic", ang_vel=1.0)
+        self.assertEqual(rotate90.name, "test_rotate90")
+        self.assertEqual(rotate90.topic_name, "/test_topic")
+        self.assertEqual(rotate90.max_ang_vel, 1.0)
+
+    def test_rotate90_setup(self):
+        # Test the setup method of the Rotate90 class
+        rotate90 = Rotate90(name="test_rotate90", topic_name="/test_topic", ang_vel=1.0)
+        rotate90.setup(node=self.mock_node)
+        self.mock_node.create_publisher.assert_called_once()
+
+    def test_rotate90_update(self):
+        # Test the update method of the Rotate90 class
+        rotate90 = Rotate90(name="test_rotate90", topic_name="/test_topic", ang_vel=1.0)
+        rotate90.setup(node=self.mock_node)
+        status = rotate90.update()
+        self.assertEqual(status, pt.common.Status.FAILURE)  # Assuming it fails after trying to rotate 90 degrees
+        self.mock_publisher.publish.assert_called()
+
+    def test_rotate90_terminate(self):
+        # Test the terminate method of the Rotate90 class
+        rotate90 = Rotate90(name="test_rotate90", topic_name="/test_topic", ang_vel=1.0)
+        rotate90.setup(node=self.mock_node)
+        rotate90.terminate(pt.common.Status.SUCCESS)
+        self.mock_publisher.publish.assert_called()
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

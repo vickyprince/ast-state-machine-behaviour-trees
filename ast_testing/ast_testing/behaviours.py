@@ -261,4 +261,70 @@ class LaserScan2bb(ptr.subscribers.ToBlackboard):
         else:
             print("Initiating Laser Scan")
             return pt.common.Status.RUNNING 
+
+class Rotate90(pt.behaviour.Behaviour):
+    """Rotates the robot by 90 degrees
+    """
+    def __init__(self, name="rotate 90",
+                topic_name="/cmd_vel",
+                ang_vel=1.0):
+        self.topic_name = topic_name
+        self.max_ang_vel = ang_vel # units: rad/sec
+        super(Rotate90, self).__init__(name)
+     
+    def setup(self, **kwargs):
+        """Setting up things which generally might require time to prevent delay in the tree initialisation
+        """
+        self.logger.info("[ROTATE] setting up rotate behaviour")
         
+        try:
+            self.node = kwargs['node']
+        except KeyError as e:
+            error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.qualified_name)
+            raise KeyError(error_message) from e
+        
+        # Create publisher to publish rotation commands
+        self.cmd_vel_pub = self.node.create_publisher(
+            msg_type=Twist,
+            topic=self.topic_name,
+            qos_profile=ptr.utilities.qos_profile_latched()
+        )
+
+        self.feedback_message = "setup"
+
+        return True
+    
+    def update(self):
+        """Rotate the robot by 90 degrees with in a for loop
+
+        """
+        self.logger.info("[ROTATE] update: updating rotate behaviour")
+        self.logger.debug("%s.update()" % self.__class__.__name__)
+
+        # Rotate the robot by 90 degrees
+        msg = Twist()
+        msg.angular.z = 0.5
+
+        for _ in range(100):
+            self.cmd_vel_pub.publish(msg)
+            rclpy.spin_once(self.node, timeout_sec=0.1)
+
+        self.feedback_message = "rotated 90 degrees"
+        return pt.common.Status.FAILURE
+    
+    def terminate(self, new_status):
+        """Trigerred once the execution of the behaviour finishes, 
+        i.e. when the status changes from RUNNING to SUCCESS or FAILURE
+        """
+        self.logger.info("[ROTATE] terminate: publishing zero angular velocity")
+
+        # Stop the robot
+        twist_msg = Twist()
+        twist_msg.linear.x = 0.
+        twist_msg.linear.y = 0.
+        twist_msg.angular.z = 0.
+                    
+        self.cmd_vel_pub.publish(twist_msg)
+        self.sent_goal = False
+        
+        return pt.common.Status.SUCCESS
