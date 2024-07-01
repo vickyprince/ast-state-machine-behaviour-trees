@@ -1,3 +1,8 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
 # This workflow checks out code, performs a Codacy security scan
 # and integrates the results with the
 # GitHub Advanced Security code scanning feature.  For more information on
@@ -48,13 +53,6 @@ jobs:
           # Force 0 exit code to allow SARIF file generation
           # This will handover control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
-          # Additional configuration for Python PEP8 style guide
-          tool-args:
-            pylint:
-              options: "--pylint-options='--rcfile=.pylintrc'"
-            flake8:
-              enabled: true
-              options: "--config=.flake8"
 
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
